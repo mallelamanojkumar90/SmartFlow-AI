@@ -2,6 +2,16 @@
 
 SmartFlow AI is an end-to-end Python project for real-time traffic signal optimization using Deep Reinforcement Learning. It simulates a three-lane traffic intersection and trains a Deep Q-Network (DQN) agent to choose green signals that reduce total waiting time and congestion.
 
+## Live Demo
+
+The app is deployed on Streamlit Cloud:
+
+```text
+https://smartflow-ai.streamlit.app
+```
+
+Open the live dashboard here: [SmartFlow AI Streamlit App](https://smartflow-ai.streamlit.app)
+
 ## Project Structure
 
 ```text
@@ -75,6 +85,14 @@ model/training_log.csv
 ```
 
 ## Run Dashboard
+
+Live app:
+
+```text
+https://smartflow-ai.streamlit.app
+```
+
+Run locally:
 
 ```bash
 streamlit run app.py
