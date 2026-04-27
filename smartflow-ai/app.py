@@ -15,7 +15,7 @@ from model.dqn_model import AgentConfig, DQNAgent
 from utils import moving_average
 
 
-MODEL_PATH = model/dqn_traffic.pth
+MODEL_PATH = "model/dqn_traffic.pth"
 os.makedirs("model", exist_ok=True)
 
 if not os.path.exists(MODEL_PATH):
