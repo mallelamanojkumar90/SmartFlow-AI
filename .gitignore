@@ -30,9 +30,6 @@ htmlcov/
 # Logs
 *.log
 
-# SmartFlow generated artifacts
-smartflow-ai/model/*.pth
-smartflow-ai/model/training_log.csv
 
 # OS and editor files
 .DS_Store
