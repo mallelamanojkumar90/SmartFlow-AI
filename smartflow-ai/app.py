@@ -5,6 +5,7 @@ from __future__ import annotations
 import time
 from pathlib import Path
 
+import os
 import matplotlib.pyplot as plt
 import streamlit as st
 
@@ -13,7 +14,9 @@ from model.dqn_model import AgentConfig, DQNAgent
 from utils import moving_average
 
 
-MODEL_PATH = Path("model/dqn_traffic.pth")
+MODEL_PATH = os.path.join("model","dqn_traffic.pth")
+if not os.path.exists(MODEL_PATH):
+    raise FileNotFoundError("Model not found")
 
 
 @st.cache_resource
