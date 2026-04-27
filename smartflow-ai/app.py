@@ -15,13 +15,13 @@ from model.dqn_model import AgentConfig, DQNAgent
 from utils import moving_average
 
 
-MODEL_PATH = "model/dqn_traffic.pth"
+MODEL_PATH = Path("model/dqn_traffic.pth")
 os.makedirs("model", exist_ok=True)
 
 if not os.path.exists(MODEL_PATH):
-    st.warning("Model not found. Downloading...")
+    print("Model Not Found downloading...")
     
-    url = "https://huggingface.co/mallelamanoj75/RL_TrafficControl/blob/main/dqn_traffic.pth"  # <-- replace this
+    url = "https://huggingface.co/mallelamanoj75/RL_TrafficControl/blob/main/dqn_traffic.pth"
     urllib.request.urlretrieve(url, MODEL_PATH)
 
     st.success("Model downloaded successfully!")
