@@ -6,6 +6,7 @@ import time
 from pathlib import Path
 
 import os
+import urllib.request
 import matplotlib.pyplot as plt
 import streamlit as st
 
@@ -14,9 +15,16 @@ from model.dqn_model import AgentConfig, DQNAgent
 from utils import moving_average
 
 
-MODEL_PATH = os.path.join("model","dqn_traffic.pth")
+MODEL_PATH = model/dqn_traffic.pth
+os.makedirs("model", exist_ok=True)
+
 if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError("Model not found")
+    st.warning("Model not found. Downloading...")
+    
+    url = "https://huggingface.co/mallelamanoj75/RL_TrafficControl/blob/main/dqn_traffic.pth"  # <-- replace this
+    urllib.request.urlretrieve(url, MODEL_PATH)
+
+    st.success("Model downloaded successfully!")
 
 
 @st.cache_resource
