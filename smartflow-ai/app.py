@@ -6,6 +6,7 @@ import time
 from pathlib import Path
 
 import os
+import pickle
 import urllib.request
 import matplotlib.pyplot as plt
 import streamlit as st
@@ -16,24 +17,33 @@ from utils import moving_average
 
 
 MODEL_PATH = Path("model/dqn_traffic.pth")
-os.makedirs("model", exist_ok=True)
+MODEL_URL = "https://huggingface.co/mallelamanoj75/RL_TrafficControl/resolve/main/dqn_traffic.pth"
 
-if not os.path.exists(MODEL_PATH):
-    print("Model Not Found downloading...")
-    
-    url = "https://huggingface.co/mallelamanoj75/RL_TrafficControl/blob/main/dqn_traffic.pth"
-    urllib.request.urlretrieve(url, MODEL_PATH)
 
-    st.success("Model downloaded successfully!")
+def download_model() -> None:
+    MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = MODEL_PATH.with_suffix(".pth.download")
+    urllib.request.urlretrieve(MODEL_URL, temp_path)
+    os.replace(temp_path, MODEL_PATH)
 
 
 @st.cache_resource
 def load_agent() -> DQNAgent:
     env = TrafficEnv(TrafficConfig())
     agent = DQNAgent(env.state_size, env.action_size, AgentConfig(epsilon_start=0.0, epsilon_min=0.0))
-    if MODEL_PATH.exists():
+
+    if not MODEL_PATH.exists():
+        download_model()
+
+    try:
         agent.load(str(MODEL_PATH))
-        agent.epsilon = 0.0
+    except (pickle.UnpicklingError, EOFError, ValueError):
+        if MODEL_PATH.exists():
+            MODEL_PATH.unlink()
+        download_model()
+        agent.load(str(MODEL_PATH))
+
+    agent.epsilon = 0.0
     return agent
 
 
@@ -71,11 +81,14 @@ def plot_line(values: list[float], title: str, ylabel: str, smooth: bool = False
 def main() -> None:
     st.set_page_config(page_title="SmartFlow AI", layout="wide")
     initialize_session()
-    agent = load_agent()
 
     st.title("SmartFlow AI: Real-Time Traffic Signal Optimization")
-    if not MODEL_PATH.exists():
-        st.warning("No trained model found at model/dqn_traffic.pth. Run `python train.py` first for learned behavior.")
+    with st.spinner("Loading trained traffic agent..."):
+        try:
+            agent = load_agent()
+        except Exception as exc:
+            st.error(f"Unable to load the trained model: {exc}")
+            st.stop()
 
     controls = st.columns([1, 1, 1, 4])
     if controls[0].button("Start", use_container_width=True):

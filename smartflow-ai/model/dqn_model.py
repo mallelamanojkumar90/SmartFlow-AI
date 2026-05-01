@@ -155,7 +155,14 @@ class DQNAgent:
         )
 
     def load(self, path: str) -> None:
-        checkpoint = torch.load(path, map_location=self.device)
+        try:
+            checkpoint = torch.load(path, map_location=self.device, weights_only=True)
+        except TypeError:
+            checkpoint = torch.load(path, map_location=self.device)
+
+        if not isinstance(checkpoint, dict) or "model_state_dict" not in checkpoint:
+            raise ValueError(f"Invalid model checkpoint: {path}")
+
         self.policy_net.load_state_dict(checkpoint["model_state_dict"])
         self.update_target_network()
         self.epsilon = float(checkpoint.get("epsilon", self.config.epsilon_min))
